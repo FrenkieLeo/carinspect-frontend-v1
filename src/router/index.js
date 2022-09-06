@@ -13,7 +13,7 @@ import Layout from '@/layout'
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
  * alwaysShow: true               if set true, will always show the root menu
  *                                if not set alwaysShow, when item has more than one children route,
- *                                it will becomes nested mode, otherwise not show the root menu
+ *                                it will becomes carmanage mode, otherwise not show the root menu
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
@@ -51,107 +51,101 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '面板', icon: 'dashboard' }
     }]
   },
 
   {
-    path: '/example',
+    path: '/basic',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/basic/drivers',
+    name: 'basic',
+    meta: { title: '基本信息', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'drivers',
+        name: 'Drivers',
+        component: () => import('@/views/drivers/index'),
+        meta: { title: '驾驶员信息', icon: 'table' }
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'vehicles',
+        name: 'vehicles',
+        component: () => import('@/views/vehicles/index'),
+        meta: { title: '车辆信息', icon: 'tree' }
       }
     ]
   },
-
   {
-    path: '/form',
+    path: '/carmanage',
+    component: Layout,
+    redirect: '/carmanage/etc',
+    name: 'carmanage',
+    meta: {
+      title: '车辆管理',
+      icon: 'table'
+    },
+    children: [
+      {
+        path: 'etc',
+        component: () => import('@/views/carmanage/etc/index'),
+        name: 'etc',
+        meta: { title: 'etc管理' }
+      },
+      {
+        path: 'fuel',
+        component: () => import('@/views/carmanage/fuel/index'),
+        name: 'fuel',
+        meta: { title: '燃油管理' }
+      },
+      {
+        path: 'maintenance',
+        component: () => import('@/views/carmanage/maintenance/index'),
+        name: 'maintenance',
+        meta: { title: '维保管理' }
+      },
+      {
+        path: 'insurance',
+        component: () => import('@/views/carmanage/insurance/index'),
+        name: 'insurance',
+        meta: { title: '保险管理' }
+      },
+      {
+        path: 'illegal',
+        component: () => import('@/views/carmanage/illegal/index'),
+        name: 'illegal',
+        meta: { title: '违章管理' }
+      },
+      {
+        path: 'accidents',
+        component: () => import('@/views/carmanage/accidents/index'),
+        name: 'accidents',
+        meta: { title: '事故管理' }
+      },
+      {
+        path: 'annual',
+        component: () => import('@/views/carmanage/annual/index'),
+        name: 'annual',
+        meta: { title: '年检管理' }
+      }
+    ]
+  },
+  {
+    path: '/setting',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        name: 'setting',
+        component: () => import('@/views/setting/index'),
+        meta: { title: '系统设置', icon: 'form' }
       }
     ]
   },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
@@ -159,7 +153,6 @@ export const constantRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

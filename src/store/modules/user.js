@@ -29,6 +29,8 @@ const mutations = {
 
 const actions = {
   // user login
+
+  // userinfo 就是登录信息
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
@@ -48,14 +50,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
+        console.log('we are using getInfo', data)
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
+        const avatar = 'https://s1.ax1x.com/2020/05/25/tp7UWF.gif'
+        // const avatar = 'https://s1.ax1x.com/2022/08/26/v2XawR.png'
+        const { username } = data
+        commit('SET_NAME', username)
         commit('SET_AVATAR', avatar)
         resolve(data)
       }).catch(error => {

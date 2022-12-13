@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://localhost:27081/',
+  baseURL: 'https://carinspect-v1-17139-5-1314894111.sh.run.tcloudbase.com/',
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: false, // send cookies when cross-domain requests
   responseType: 'json',
@@ -31,22 +31,25 @@ service.interceptors.request.use(
         if (!config.params) {
           config.params = {}
         }
-        config.headers['Content-Type'] = 'application/json'
+        if (config.url === '/file') {
+          config.headers['Content-Type'] = 'multipart/formdata'
+        } else {
+          config.headers['Content-Type'] = 'application/json' // 配套application/json使用
+        }
         break
       case 'post':
-        console.log('request', config)
         if (!config.data) {
           config.data = {}
         }
-        // if (config.responseType === 'json') {
-        //   config.data = Qs.stringify(config.data) // 配套application/x-www-form-urlencoded使用
-        // } else {
-        config.headers['Content-Type'] = 'application/json' // 配套application/json使用
-        // }
+        if (config.url === '/file/uploadFile' || config.url === '/file') {
+          config.headers['Content-Type'] = 'multipart/formdata'
+        } else {
+          config.headers['Content-Type'] = 'application/json' // 配套application/json使用
+        }
         break
       default:
     }
-    console.log(`【request】url:${config.url},data:${config.data} `)
+    console.log(`【request】url:${config.url}`)
     return config
   },
   error => {

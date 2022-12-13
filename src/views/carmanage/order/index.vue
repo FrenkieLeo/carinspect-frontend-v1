@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Table :annual-list="annualList" />
+    <Table :order-list="orderList" />
   </div>
 </template>
 <script>
-import Table from '../../../components/Annual_Table/index'
+import Table from '../../../components/Order_Table/index'
 export default {
   name: '',
   components: {
@@ -13,16 +13,16 @@ export default {
   },
   data() {
     return {
-      annualList: []
+      orderList: []
     }
   },
   mounted: function() {
-    this.getAnnualList()
+    this.getOrderData()
   },
   methods: {
-    getAnnualList() {
-      this.$store.dispatch('annual/getAnnual').then((res) => {
-        this.annualList = res
+    getOrderData() {
+      this.$store.dispatch('order/getOrder').then((res) => {
+        this.orderList = res
       })
     }
   }

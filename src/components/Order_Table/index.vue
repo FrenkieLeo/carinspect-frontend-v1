@@ -10,14 +10,15 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
-        <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
+        <vxe-button @click="importDataEvent">导入</vxe-button>
+        <vxe-button @click="$refs.orderTable.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
-      ref="driverTable"
+      ref="orderTable"
       border
-      resizable
+      auto-resize
       :keep-source="true"
       :column-config="columnConfig"
       :row-config="{ isHover: true }"
@@ -31,79 +32,83 @@
       }"
     >
       <vxe-column type="checkbox" width="60" />
-      <vxe-column type="seq" title="序号" width="60" />
+      <!-- <vxe-column type="seq" title="序号" width="60" /> -->
       <vxe-column
-        field="name"
-        title="姓名"
+        field="order"
+        title="订单号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
-          <vxe-input v-model="row.name" type="text" />
+          <vxe-input v-model="row.order" type="text" />
         </template>
       </vxe-column>
-      <vxe-column field="department" title="部门" :edit-render="{}">
+      <vxe-column field="licence" title="应邀车牌" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.licence" type="text" placeholder="应邀车牌" />
+        </template>
+      </vxe-column>
+      <vxe-column field="driver" title="司机姓名" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.driver" type="text" placeholder="司机姓名" />
+        </template>
+      </vxe-column>
+      <vxe-column field="start_place" title="上车地点" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.start_place" type="text" placeholder="上车地点" />
+        </template>
+      </vxe-column>
+      <vxe-column field="pass_place" title="途径地点" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.pass_place" type="text" placeholder="途径地点" />
+        </template>
+      </vxe-column>
+      <vxe-column field="end_place" title="下车地点" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.end_place" type="text" placeholder="下车地点" />
+        </template>
+      </vxe-column>
+      <vxe-column field="driving_time" title="行驶时长(分钟)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.driving_time" type="text" placeholder="行驶时长(分钟)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="driving_mile" title="行驶总里程(公里)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.driving_mile" type="text" placeholder="行驶总里程(公里)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="reason" title="用车事由" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.reason" type="text" placeholder="用车事由" />
+        </template>
+      </vxe-column>
+      <vxe-column field="start_time" title="取车时间" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.department"
-            type="text"
-            placeholder="所属部门"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_number"
-            type="text"
-            placeholder="驾照号"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
-            <vxe-option
-              v-for="item in license"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-              :disabled="item.disabled"
-            />
-          </vxe-select>
-        </template>
-      </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_expire"
+            v-model="row.start_time"
             type="date"
             placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
+      <vxe-column field="end_time" title="还车时间" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.test_situation"
-            type="text"
-            placeholder="安全测试情况"
+            v-model="row.end_time"
+            type="date"
+            placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="140">
+      <!-- <vxe-column title="操作" width="140">
         <template #default="{ row }" class="operation">
           <el-button @click="editEvent(row)">附件</el-button>
         </template>
-      </vxe-column>
+      </vxe-column> -->
     </vxe-table>
-    <vxe-modal
+    <!-- <vxe-modal
       v-model="showEdit"
       title="附件列表"
       width="40vw"
@@ -139,11 +144,8 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
-    </vxe-modal>
+    </vxe-modal> -->
   </div>
 </template>
 
@@ -157,7 +159,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    orderList: Array || String
   },
   data() {
     return {
@@ -175,29 +177,26 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
         insertData: [],
         otherData: []
       },
+      fuel_type: [
+        { label: '88', value: '88', disabled: false },
+        { label: '92', value: '92', disabled: false },
+        { label: '95', value: '95', disabled: false },
+        { label: '98', value: '98', disabled: false },
+        { label: '柴油', value: '柴油', disabled: false }
+      ],
       clickData: {},
       loading: false
     }
   },
   computed: {
     driverData() {
-      return this.driverList
+      return this.orderList
     }
   },
   created() {
@@ -209,10 +208,10 @@ export default {
       return window.pageYOffset
     },
     exportDataEvent() {
-      this.$refs.driverTable.exportData({ type: 'csv' })
+      this.$refs.orderTable.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      alert('有待实现')
     },
     showDetailEvent(row) {
       console.log(row)
@@ -246,7 +245,7 @@ export default {
       this.$refs.fileTable.insert(records)
     },
     insertEvent() {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.orderTable
       const newRow = {
         name: '新数据'
       }
@@ -337,17 +336,17 @@ export default {
     // 保存数据按钮
     saveData() {
       this.updateData.updateData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getUpdateRecords())
+        JSON.stringify(this.$refs.orderTable.getUpdateRecords())
       )
       this.updateData.insertData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getInsertRecords())
+        JSON.stringify(this.$refs.orderTable.getInsertRecords())
       )
       this.updateData.deleteData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getRemoveRecords())
+        JSON.stringify(this.$refs.orderTable.getRemoveRecords())
       )
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'order/updateOrder',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -364,7 +363,7 @@ export default {
         })
     },
     async insertRow(currRow) {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.orderTable
       const record = {
         name: '新数据'
       }
@@ -378,8 +377,8 @@ export default {
       // return search()
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
-        const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const searchProps = ['order', 'license', 'driver', 'start_place', 'pass_place', 'end_place', 'driving_time', 'driving_mile', 'reason', 'start_time', 'end_time']
+        const rest = this.orderList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,7 +387,7 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.orderList
       }
       console.log(this.newList)
     }, 500)

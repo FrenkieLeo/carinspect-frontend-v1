@@ -10,12 +10,13 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
-        <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
+        <vxe-button @click="importDataEvent">导入</vxe-button>
+        <vxe-button @click="$refs.accidentsTable.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
-      ref="driverTable"
+      ref="accidentsTable"
       border
       resizable
       :keep-source="true"
@@ -34,76 +35,70 @@
       <vxe-column type="seq" title="序号" width="60" />
       <vxe-column
         field="name"
-        title="姓名"
+        title="车牌号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
           <vxe-input v-model="row.name" type="text" />
         </template>
       </vxe-column>
-      <vxe-column field="department" title="部门" :edit-render="{}">
+      <vxe-column field="accidents_time" title="发生日期" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.department"
-            type="text"
-            placeholder="所属部门"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_number"
-            type="text"
-            placeholder="驾照号"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
-            <vxe-option
-              v-for="item in license"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-              :disabled="item.disabled"
-            />
-          </vxe-select>
-        </template>
-      </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_expire"
+            v-model="row.accidents_time"
             type="date"
             placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
+      <vxe-column field="driver" title="司机" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.test_situation"
-            type="text"
-            placeholder="安全测试情况"
-            transfer
-          />
+          <vxe-input v-model="row.driver" type="text" placeholder="司机" />
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="140">
+      <vxe-column field="phone" title="电话" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.phone" type="text" placeholder="电话" />
+        </template>
+      </vxe-column>
+      <vxe-column field="injury" title="人伤数目" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.injury" type="text" placeholder="人伤数目" />
+        </template>
+      </vxe-column>
+      <vxe-column field="injury_evaluation" title="人伤估损合计(元)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.injury_evaluation" type="text" placeholder="人伤估损合计(元)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="car_evaluation" title="车损项目合计(元)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.car_evaluation" type="text" placeholder="车损项目合计(元)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="thing_evaluation" title="物损项目合计(元)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.thing_evaluation" type="text" placeholder="物损项目合计(元)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="total_loss" title="物损项目合计(元)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.total_loss" type="text" placeholder="物损项目合计(元)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="description" title="事故描述" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.description" type="text" placeholder="事故描述" />
+        </template>
+      </vxe-column>
+      <!-- <vxe-column title="操作" width="140">
         <template #default="{ row }" class="operation">
           <el-button @click="editEvent(row)">附件</el-button>
         </template>
-      </vxe-column>
+      </vxe-column> -->
     </vxe-table>
-    <vxe-modal
+    <!-- <vxe-modal
       v-model="showEdit"
       title="附件列表"
       width="40vw"
@@ -139,11 +134,8 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
-    </vxe-modal>
+    </vxe-modal> -->
   </div>
 </template>
 
@@ -157,7 +149,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    accidentsList: Array || String
   },
   data() {
     return {
@@ -175,29 +167,26 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
         insertData: [],
         otherData: []
       },
+      fuel_type: [
+        { label: '88', value: '88', disabled: false },
+        { label: '92', value: '92', disabled: false },
+        { label: '95', value: '95', disabled: false },
+        { label: '98', value: '98', disabled: false },
+        { label: '柴油', value: '柴油', disabled: false }
+      ],
       clickData: {},
       loading: false
     }
   },
   computed: {
     driverData() {
-      return this.driverList
+      return this.accidentsList
     }
   },
   created() {
@@ -209,10 +198,10 @@ export default {
       return window.pageYOffset
     },
     exportDataEvent() {
-      this.$refs.driverTable.exportData({ type: 'csv' })
+      this.$refs.accidentsTable.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      alert('有待实现')
     },
     showDetailEvent(row) {
       console.log(row)
@@ -246,7 +235,7 @@ export default {
       this.$refs.fileTable.insert(records)
     },
     insertEvent() {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.accidentsTable
       const newRow = {
         name: '新数据'
       }
@@ -337,17 +326,17 @@ export default {
     // 保存数据按钮
     saveData() {
       this.updateData.updateData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getUpdateRecords())
+        JSON.stringify(this.$refs.accidentsTable.getUpdateRecords())
       )
       this.updateData.insertData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getInsertRecords())
+        JSON.stringify(this.$refs.accidentsTable.getInsertRecords())
       )
       this.updateData.deleteData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getRemoveRecords())
+        JSON.stringify(this.$refs.accidentsTable.getRemoveRecords())
       )
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'accidents/updateAccidents',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -364,7 +353,7 @@ export default {
         })
     },
     async insertRow(currRow) {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.accidentsTable
       const record = {
         name: '新数据'
       }
@@ -379,7 +368,7 @@ export default {
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
         const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const rest = this.accidentsList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,7 +377,7 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.accidentsList
       }
       console.log(this.newList)
     }, 500)

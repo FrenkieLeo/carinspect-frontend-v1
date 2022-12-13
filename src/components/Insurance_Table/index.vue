@@ -10,6 +10,7 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
+        <vxe-button @click="importDataEvent">导入</vxe-button>
         <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
@@ -34,76 +35,65 @@
       <vxe-column type="seq" title="序号" width="60" />
       <vxe-column
         field="name"
-        title="姓名"
+        title="车牌号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
           <vxe-input v-model="row.name" type="text" />
         </template>
       </vxe-column>
-      <vxe-column field="department" title="部门" :edit-render="{}">
+      <vxe-column field="insurance_type" title="保险类型" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.insurance_type" type="text" placeholder="保险类型" />
+        </template>
+      </vxe-column>
+      <vxe-column field="insurance_project" title="购买项目" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.insurance_project" type="text" placeholder="购买项目" />
+        </template>
+      </vxe-column>
+      <vxe-column field="company" title="承保公司" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.company" type="text" placeholder="承保公司" />
+        </template>
+      </vxe-column>
+      <vxe-column field="insurance_order" title="保险单号" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.insurance_order" type="text" placeholder="保险单号" />
+        </template>
+      </vxe-column>
+      <vxe-column field="insurance_fee" title="保险费用" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.insurance_fee" type="text" placeholder="保险费用" />
+        </template>
+      </vxe-column>
+      <vxe-column field="insurance_starttime" title="保险开始日期" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.department"
-            type="text"
-            placeholder="所属部门"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_number"
-            type="text"
-            placeholder="驾照号"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
-            <vxe-option
-              v-for="item in license"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-              :disabled="item.disabled"
-            />
-          </vxe-select>
-        </template>
-      </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_expire"
+            v-model="row.insurance_starttime"
             type="date"
             placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
+      <vxe-column field="insurance_endtime" title="保险到期日期" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.test_situation"
-            type="text"
-            placeholder="安全测试情况"
+            v-model="row.insurance_endtime"
+            type="date"
+            placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="140">
+      <!-- <vxe-column title="操作" width="140">
         <template #default="{ row }" class="operation">
           <el-button @click="editEvent(row)">附件</el-button>
         </template>
-      </vxe-column>
+      </vxe-column> -->
     </vxe-table>
-    <vxe-modal
+    <!-- <vxe-modal
       v-model="showEdit"
       title="附件列表"
       width="40vw"
@@ -139,11 +129,8 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
-    </vxe-modal>
+    </vxe-modal> -->
   </div>
 </template>
 
@@ -157,7 +144,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    insuranceList: Array || String
   },
   data() {
     return {
@@ -175,29 +162,26 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
         insertData: [],
         otherData: []
       },
+      fuel_type: [
+        { label: '88', value: '88', disabled: false },
+        { label: '92', value: '92', disabled: false },
+        { label: '95', value: '95', disabled: false },
+        { label: '98', value: '98', disabled: false },
+        { label: '柴油', value: '柴油', disabled: false }
+      ],
       clickData: {},
       loading: false
     }
   },
   computed: {
     driverData() {
-      return this.driverList
+      return this.insuranceList
     }
   },
   created() {
@@ -212,7 +196,7 @@ export default {
       this.$refs.driverTable.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      alert('有待实现')
     },
     showDetailEvent(row) {
       console.log(row)
@@ -347,7 +331,7 @@ export default {
       )
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'insurance/updateInsurance',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -378,8 +362,8 @@ export default {
       // return search()
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
-        const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const searchProps = ['name', 'insurance_type', 'insurance_project', 'company', 'insurance_order', 'insurance_fee', 'insurance_starttime', 'insurance_endtime']
+        const rest = this.insuranceList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,7 +372,7 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.insuranceList
       }
       console.log(this.newList)
     }, 500)

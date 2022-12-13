@@ -34,6 +34,7 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
+    // component: Layout,
     hidden: true
   },
 
@@ -79,13 +80,19 @@ export const constantRoutes = [
   {
     path: '/carmanage',
     component: Layout,
-    redirect: '/carmanage/etc',
+    redirect: '/carmanage/order',
     name: 'carmanage',
     meta: {
       title: '车辆管理',
       icon: 'table'
     },
     children: [
+      {
+        path: 'order',
+        component: () => import('@/views/carmanage/order/index'),
+        name: 'order',
+        meta: { title: '订单管理' }
+      },
       {
         path: 'etc',
         component: () => import('@/views/carmanage/etc/index'),

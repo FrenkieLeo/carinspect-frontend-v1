@@ -10,12 +10,12 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
-        <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
+        <vxe-button @click="$refs.vehicleTables.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
-      ref="driverTable"
+      ref="vehicleTables"
       border
       resizable
       :keep-source="true"
@@ -33,12 +33,12 @@
       <vxe-column type="checkbox" width="60" />
       <vxe-column type="seq" title="序号" width="60" />
       <vxe-column
-        field="name"
-        title="姓名"
+        field="number"
+        title="车牌号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
-          <vxe-input v-model="row.name" type="text" />
+          <vxe-input v-model="row.number" type="text" />
         </template>
       </vxe-column>
       <vxe-column field="department" title="部门" :edit-render="{}">
@@ -50,50 +50,26 @@
           />
         </template>
       </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
+      <vxe-column field="model" title="型号" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
+          <vxe-input v-model="row.model" type="text" placeholder="型号" />
         </template>
       </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
+      <vxe-column field="car_type" title="车型" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.license_number"
+            v-model="row.car_type"
             type="text"
-            placeholder="驾照号"
+            placeholder="车型"
           />
         </template>
       </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
-            <vxe-option
-              v-for="item in license"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-              :disabled="item.disabled"
-            />
-          </vxe-select>
-        </template>
-      </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
+      <vxe-column field="belonging" title="归属" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.license_expire"
-            type="date"
-            placeholder="请选择日期"
-            transfer
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.test_situation"
+            v-model="row.belonging"
             type="text"
-            placeholder="安全测试情况"
-            transfer
+            placeholder="归属"
           />
         </template>
       </vxe-column>
@@ -139,9 +115,6 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
     </vxe-modal>
   </div>
@@ -157,7 +130,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    vehicleList: Array || String
   },
   data() {
     return {
@@ -175,16 +148,6 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
@@ -196,8 +159,8 @@ export default {
     }
   },
   computed: {
-    driverData() {
-      return this.driverList
+    vehicleTables() {
+      return this.vehicleList
     }
   },
   created() {
@@ -209,21 +172,20 @@ export default {
       return window.pageYOffset
     },
     exportDataEvent() {
-      this.$refs.driverTable.exportData({ type: 'csv' })
+      this.$refs.vehicleTables.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      this.$refs.vehicleTables.importData()
     },
     showDetailEvent(row) {
       console.log(row)
     },
     async editEvent(row) {
       this.clickData = {
-        click_name: row.name,
+        click_name: row.number,
         click_id: row.id,
-        click_module: 'drivers'
+        click_module: 'vehicles'
       }
-      console.log('高度', window.pageYOffset)
       this.selectRow = row
       this.showEdit = true
       const initFile = await new Promise((resolve, reject) => {
@@ -246,7 +208,7 @@ export default {
       this.$refs.fileTable.insert(records)
     },
     insertEvent() {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.vehicleTables
       const newRow = {
         name: '新数据'
       }
@@ -337,17 +299,18 @@ export default {
     // 保存数据按钮
     saveData() {
       this.updateData.updateData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getUpdateRecords())
+        JSON.stringify(this.$refs.vehicleTables.getUpdateRecords())
       )
       this.updateData.insertData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getInsertRecords())
+        JSON.stringify(this.$refs.vehicleTables.getInsertRecords())
       )
       this.updateData.deleteData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getRemoveRecords())
+        JSON.stringify(this.$refs.vehicleTables.getRemoveRecords())
       )
+      console.log('updateData', this.updateData)
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'vehicles/updateVehicles',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -364,7 +327,7 @@ export default {
         })
     },
     async insertRow(currRow) {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.vehicleTables
       const record = {
         name: '新数据'
       }
@@ -376,10 +339,11 @@ export default {
       //   console.log(this.filterName1)
       // }, 500)
       // return search()
+      console.log(this.vehicleList)
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
-        const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const searchProps = ['name', 'department', 'model', 'company', 'car_type', 'belonging']
+        const rest = this.vehicleList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,9 +352,9 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.vehicleList
       }
-      console.log(this.newList)
+      console.log('searchEvent', this.newList)
     }, 500)
   }
 }

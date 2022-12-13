@@ -10,12 +10,13 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
-        <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
+        <vxe-button @click="importDataEvent">导入</vxe-button>
+        <vxe-button @click="$refs.etcTable.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
-      ref="driverTable"
+      ref="etcTable"
       border
       resizable
       :keep-source="true"
@@ -34,76 +35,59 @@
       <vxe-column type="seq" title="序号" width="60" />
       <vxe-column
         field="name"
-        title="姓名"
+        title="车牌号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
           <vxe-input v-model="row.name" type="text" />
         </template>
       </vxe-column>
-      <vxe-column field="department" title="部门" :edit-render="{}">
+      <vxe-column field="etc" title="ETC卡号" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.department"
+            v-model="row.etc"
             type="text"
-            placeholder="所属部门"
+            placeholder="ETC卡号"
           />
         </template>
       </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
+      <vxe-column field="entry" title="入口" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
+          <vxe-input v-model="row.entry" type="text" placeholder="入口" />
         </template>
       </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
+      <vxe-column field="exit" title="出口" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_number"
-            type="text"
-            placeholder="驾照号"
-          />
+          <vxe-input v-model="row.exit" type="text" placeholder="出口" />
         </template>
       </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
+      <vxe-column field="should_pay" title="应交金额" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
-            <vxe-option
-              v-for="item in license"
-              :key="item.value"
-              :value="item.value"
-              :label="item.label"
-              :disabled="item.disabled"
-            />
-          </vxe-select>
+          <vxe-input v-model="row.should_pay" type="text" placeholder="应交金额" />
         </template>
       </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
+      <vxe-column field="actual_pay" title="实交金额" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_expire"
-            type="date"
-            placeholder="请选择日期"
-            transfer
-          />
+          <vxe-input v-model="row.actual_pay" type="text" placeholder="实交金额" />
         </template>
       </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
+      <vxe-column field="entry_time" title="入口时间" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.test_situation"
-            type="text"
-            placeholder="安全测试情况"
-            transfer
-          />
+          <vxe-input v-model="row.entryTime" type="text" placeholder="入口时间" />
         </template>
       </vxe-column>
-      <vxe-column title="操作" width="140">
+      <vxe-column field="exit_time" title="出口时间" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.exit_time" type="text" placeholder="出口时间" />
+        </template>
+      </vxe-column>
+      <!-- <vxe-column title="操作" width="140">
         <template #default="{ row }" class="operation">
           <el-button @click="editEvent(row)">附件</el-button>
         </template>
-      </vxe-column>
+      </vxe-column> -->
     </vxe-table>
-    <vxe-modal
+    <!-- <vxe-modal
       v-model="showEdit"
       title="附件列表"
       width="40vw"
@@ -139,11 +123,8 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
-    </vxe-modal>
+    </vxe-modal> -->
   </div>
 </template>
 
@@ -157,7 +138,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    etcList: Array || String
   },
   data() {
     return {
@@ -175,16 +156,6 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
@@ -197,7 +168,7 @@ export default {
   },
   computed: {
     driverData() {
-      return this.driverList
+      return this.etcList
     }
   },
   created() {
@@ -209,10 +180,10 @@ export default {
       return window.pageYOffset
     },
     exportDataEvent() {
-      this.$refs.driverTable.exportData({ type: 'csv' })
+      this.$refs.etcTable.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      alert('有待实现')
     },
     showDetailEvent(row) {
       console.log(row)
@@ -246,7 +217,7 @@ export default {
       this.$refs.fileTable.insert(records)
     },
     insertEvent() {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.etcTable
       const newRow = {
         name: '新数据'
       }
@@ -337,17 +308,17 @@ export default {
     // 保存数据按钮
     saveData() {
       this.updateData.updateData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getUpdateRecords())
+        JSON.stringify(this.$refs.etcTable.getUpdateRecords())
       )
       this.updateData.insertData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getInsertRecords())
+        JSON.stringify(this.$refs.etcTable.getInsertRecords())
       )
       this.updateData.deleteData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getRemoveRecords())
+        JSON.stringify(this.$refs.etcTable.getRemoveRecords())
       )
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'etc/updateEtc',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -364,7 +335,7 @@ export default {
         })
     },
     async insertRow(currRow) {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.etcTable
       const record = {
         name: '新数据'
       }
@@ -372,14 +343,10 @@ export default {
       await $table.setActiveRow(newRow)
     },
     searchEvent: _.debounce(function() {
-      // const search = _.debounce(function() {
-      //   console.log(this.filterName1)
-      // }, 500)
-      // return search()
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
-        const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const searchProps = ['name', 'etc', 'entry', 'exit', 'should_pay', 'actual_pay', 'entry_time', 'exit_time']
+        const rest = this.etcList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,12 +355,13 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.etcList
       }
-      console.log(this.newList)
+      console.log('searchEvent', this.newList)
     }, 500)
   }
 }
+
 </script>
 
 <style>

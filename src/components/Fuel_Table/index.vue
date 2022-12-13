@@ -10,12 +10,13 @@
         />
         <vxe-button @click="insertEvent">新增</vxe-button>
         <vxe-button @click="exportDataEvent">导出</vxe-button>
-        <vxe-button @click="$refs.driverTable.removeCheckboxRow()">删除选中</vxe-button>
+        <vxe-button @click="importDataEvent">导入</vxe-button>
+        <vxe-button @click="$refs.fuelTable.removeCheckboxRow()">删除选中</vxe-button>
         <vxe-button @click="saveData">保存数据</vxe-button>
       </template>
     </vxe-toolbar>
     <vxe-table
-      ref="driverTable"
+      ref="fuelTable"
       border
       resizable
       :keep-source="true"
@@ -34,41 +35,32 @@
       <vxe-column type="seq" title="序号" width="60" />
       <vxe-column
         field="name"
-        title="姓名"
+        title="车牌号"
         :edit-render="{ autofocus: '.vxe-input--inner' }"
       >
         <template #edit="{ row }">
           <vxe-input v-model="row.name" type="text" />
         </template>
       </vxe-column>
-      <vxe-column field="department" title="部门" :edit-render="{}">
+      <vxe-column field="fuel_card" title="油卡卡号" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.department"
+            v-model="row.fuel_card"
             type="text"
-            placeholder="所属部门"
+            placeholder="ETC卡号"
           />
         </template>
       </vxe-column>
-      <vxe-column field="phone" title="联系方式" :edit-render="{}">
+      <vxe-column field="gas_station" title="油站名称" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input v-model="row.phone" type="text" placeholder="联系方式" />
+          <vxe-input v-model="row.gas_station" type="text" placeholder="油站名称" />
         </template>
       </vxe-column>
-      <vxe-column field="license_number" title="驾照号" :edit-render="{}">
+      <vxe-column field="fuel_type" title="油品类型" :edit-render="{}">
         <template #edit="{ row }">
-          <vxe-input
-            v-model="row.license_number"
-            type="text"
-            placeholder="驾照号"
-          />
-        </template>
-      </vxe-column>
-      <vxe-column field="license_type" title="驾照类型" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-select v-model="row.license_type" clearable transfer>
+          <vxe-select v-model="row.fuel_type" clearable transfer>
             <vxe-option
-              v-for="item in license"
+              v-for="item in fuel_type"
               :key="item.value"
               :value="item.value"
               :label="item.label"
@@ -77,33 +69,43 @@
           </vxe-select>
         </template>
       </vxe-column>
-      <vxe-column field="license_expire" title="驾照有效期" :edit-render="{}">
+      <vxe-column field="price" title="单价(元/L)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.price" type="text" placeholder="单价(元/L)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="volume" title="加油量(L)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.volume" type="text" placeholder="加油量(L)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="should_pay" title="加油金额(元)" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.should_pay" type="text" placeholder="加油金额(元)" />
+        </template>
+      </vxe-column>
+      <vxe-column field="actual_pay" title="实付金额" :edit-render="{}">
+        <template #edit="{ row }">
+          <vxe-input v-model="row.actual_pay" type="text" placeholder="实付金额" />
+        </template>
+      </vxe-column>
+      <vxe-column field="trade_time" title="交易时间" :edit-render="{}">
         <template #edit="{ row }">
           <vxe-input
-            v-model="row.license_expire"
+            v-model="row.trade_time"
             type="date"
             placeholder="请选择日期"
             transfer
           />
         </template>
       </vxe-column>
-      <vxe-column field="test_situation" title="安全测试情况" :edit-render="{}">
-        <template #edit="{ row }">
-          <vxe-input
-            v-model="row.test_situation"
-            type="text"
-            placeholder="安全测试情况"
-            transfer
-          />
-        </template>
-      </vxe-column>
-      <vxe-column title="操作" width="140">
+      <!-- <vxe-column title="操作" width="140">
         <template #default="{ row }" class="operation">
           <el-button @click="editEvent(row)">附件</el-button>
         </template>
-      </vxe-column>
+      </vxe-column> -->
     </vxe-table>
-    <vxe-modal
+    <!-- <vxe-modal
       v-model="showEdit"
       title="附件列表"
       width="40vw"
@@ -139,11 +141,8 @@
         <vxe-column type="checkbox" width="60" />
         <vxe-column type="seq" width="60" />
         <vxe-column field="name" title="Name" />
-        <!-- <vxe-column field="type" title="Type" />
-        <vxe-column field="size" title="Size" />
-        <vxe-column field="date" title="Date" /> -->
       </vxe-table>
-    </vxe-modal>
+    </vxe-modal> -->
   </div>
 </template>
 
@@ -157,7 +156,7 @@ import _ from 'lodash'
 export default {
   props: {
     // eslint-disable-next-line vue/require-default-prop
-    driverList: Array || String
+    fuelList: Array || String
   },
   data() {
     return {
@@ -175,29 +174,26 @@ export default {
       selectRow: null,
       showEdit: false,
       fileData: [],
-      license: [
-        { label: 'C1', value: 'C1', disabled: false },
-        { label: 'C2', value: 'C2', disabled: false },
-        { label: 'C3', value: 'C3', disabled: false },
-        { label: 'B1', value: 'B1', disabled: false },
-        { label: 'B2', value: 'B2', disabled: false },
-        { label: 'A1', value: 'A1', disabled: false },
-        { label: 'A2', value: 'A2', disabled: false },
-        { label: 'A3', value: 'A3', disabled: false }
-      ],
       updateData: {
         modifyData: [],
         deleteData: [],
         insertData: [],
         otherData: []
       },
+      fuel_type: [
+        { label: '88', value: '88', disabled: false },
+        { label: '92', value: '92', disabled: false },
+        { label: '95', value: '95', disabled: false },
+        { label: '98', value: '98', disabled: false },
+        { label: '柴油', value: '柴油', disabled: false }
+      ],
       clickData: {},
       loading: false
     }
   },
   computed: {
     driverData() {
-      return this.driverList
+      return this.fuelList
     }
   },
   created() {
@@ -209,10 +205,10 @@ export default {
       return window.pageYOffset
     },
     exportDataEvent() {
-      this.$refs.driverTable.exportData({ type: 'csv' })
+      this.$refs.fuelTable.exportData({ type: 'csv' })
     },
     importDataEvent() {
-      this.$refs.driverTable.importData()
+      alert('有待实现')
     },
     showDetailEvent(row) {
       console.log(row)
@@ -246,7 +242,7 @@ export default {
       this.$refs.fileTable.insert(records)
     },
     insertEvent() {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.fuelTable
       const newRow = {
         name: '新数据'
       }
@@ -337,17 +333,17 @@ export default {
     // 保存数据按钮
     saveData() {
       this.updateData.updateData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getUpdateRecords())
+        JSON.stringify(this.$refs.fuelTable.getUpdateRecords())
       )
       this.updateData.insertData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getInsertRecords())
+        JSON.stringify(this.$refs.fuelTable.getInsertRecords())
       )
       this.updateData.deleteData = JSON.parse(
-        JSON.stringify(this.$refs.driverTable.getRemoveRecords())
+        JSON.stringify(this.$refs.fuelTable.getRemoveRecords())
       )
       this.$store
         .dispatch(
-          'drivers/updateDrivers',
+          'fuel/updateFuel',
           JSON.parse(JSON.stringify(this.updateData))
         )
         .then((res) => {
@@ -364,7 +360,7 @@ export default {
         })
     },
     async insertRow(currRow) {
-      const $table = this.$refs.driverTable
+      const $table = this.$refs.fuelTable
       const record = {
         name: '新数据'
       }
@@ -378,8 +374,8 @@ export default {
       // return search()
       const filterName = XEUtils.toValueString(this.filterName1).trim().toLowerCase()
       if (filterName) {
-        const searchProps = ['name', 'license_number', 'phone', 'department', 'license_type', 'license_expire', 'test_situation']
-        const rest = this.driverList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
+        const searchProps = ['name', 'fuel_card', 'gas_station', 'fuel_type', 'price', 'volume', 'should_pay', 'actual_pay', 'trade_time']
+        const rest = this.fuelList.filter(item => searchProps.some(key => XEUtils.toValueString(item[key]).toLowerCase().indexOf(filterName) > -1))
         this.newList = rest.map(row => {
           const item = Object.assign({}, row)
           searchProps.forEach(key => {
@@ -388,7 +384,7 @@ export default {
           return item
         })
       } else {
-        this.newList = this.driverList
+        this.newList = this.fuelList
       }
       console.log(this.newList)
     }, 500)

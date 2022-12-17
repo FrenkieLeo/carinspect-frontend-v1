@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'https://carinspect-v1-17139-5-1314894111.sh.run.tcloudbase.com/',
+  baseURL: 'https://carinspect-v2-17139-5-1314894111.sh.run.tcloudbase.com/',
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   withCredentials: false, // send cookies when cross-domain requests
   responseType: 'json',

@@ -16,3 +16,11 @@ export function updateEtc(data) {
     data
   })
 }
+
+export function insertETC(data) {
+  return request({
+    url: '/etc/insert',
+    method: 'post',
+    data
+  })
+}

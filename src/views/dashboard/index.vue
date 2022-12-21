@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <!-- <div class="dashboard-text">name: {{ name }}</div> -->
     <div class="right_part">
-      <h2>里程超过200公里用车<vxe-button class-name="exportButton" @click="exportDataEvent">导出</vxe-button></h2>
+      <h2>里程超过200公里用车</h2>
       <vxe-grid v-bind="problemMile" />
       <h2>周末/节假日用车</h2>
       <vxe-grid v-bind="problemHoliday" />
